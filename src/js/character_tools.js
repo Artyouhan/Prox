@@ -1,40 +1,31 @@
-/* eslint-disable no-plusplus */
-export default function getSortedArrOfObjProperties(obj, sortingArr = []) {
-  let propsArr = [];
-  let i = 0;
-  for (propsArr[i++] in obj);
+export default function orderByProps(object, order = []) {
+  const arr = [];
+  order.forEach((elem) => {
+    if (elem in object) {
+      arr.push({
+        key: elem,
+        value: object[elem],
+      });
+    }
+  });
 
-  const sortedArr = [];
-
-  for (const prop of sortingArr) {
-    if (propsArr.includes(prop)) {
-      sortedArr.push(prop);
+  const arr1 = [];
+  for (const prop in object) {
+    if (order && !order.includes(prop)) {
+      arr1.push({
+        key: prop,
+        value: object[prop],
+      });
+      arr1.sort((a, b) => {
+        if (a.key > b.key) {
+          return 1;
+        }
+        if (a.key < b.key) {
+          return -1;
+        }
+        return 0;
+      });
     }
   }
-
-  for (const prop of propsArr.sort()) {
-    if (!sortedArr.includes(prop)) {
-      sortedArr.push(prop);
-    }
-  }
-
-  propsArr = [];
-  for (const prop of sortedArr) {
-    propsArr.push({ key: prop, value: obj[prop] });
-  }
-
-  return propsArr;
-}
-
-export function getSpecialActions(character) {
-  const actions = [];
-  for (const action of character.special) {
-    const {
-      description = 'Описание недоступно',
-    } = action;
-    action.description = description;
-    actions.push(action);
-  }
-
-  return actions;
+  return [...arr, ...arr1];
 }
